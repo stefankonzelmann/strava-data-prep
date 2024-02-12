@@ -3,8 +3,9 @@ import * as fs from "fs";
 
 dotenv.config();
 
-function isTokenExpired(currentExpirationTime) {
+export function isTokenExpired(currentExpirationTime) {
   const currentEpochTime = Date.now();
+
   if (currentExpirationTime === "undefined") {
     return `There is an error with the currentEpirationTime, it's value is: ${currentExpirationTime}.`;
   }
@@ -39,15 +40,18 @@ async function generateNewToken() {
 }
 
 const persistNewTokenData = async (newTokenData) => {
+  console.log(newTokenData);
   // Read the .env file
   const envBuffer = fs.readFileSync(".env");
   const envConfig = dotenv.parse(envBuffer);
-  console.log(envConfig)(
-    // Update the relevant key with the new value
-    (envConfig["STRAVA_EXPIRATION_TIME"] = newTokenData.expirationTime)
-  ),
-    (envConfig["STRAVA_CACHED_REFRESH_TOKEN"] = newTokenData.refreshToken),
-    (envConfig["STRAVA_CACHED_TOKEN"] = newTokenData.accessToken);
+  console.log("Old config: ", envConfig);
+
+  // Update the relevant key with the new value
+  envConfig["STRAVA_EXPIRATION_TIME"] = newTokenData.expirationTime;
+  envConfig["STRAVA_CACHED_REFRESH_TOKEN"] = newTokenData.refreshToken;
+  envConfig["STRAVA_CACHED_TOKEN"] = newTokenData.accessToken;
+
+  console.log("New config: ", envConfig);
 
   // Write the updated key-value pair to the file
   const envText = Object.keys(envConfig)
@@ -72,7 +76,7 @@ async function getActivityData() {
 
   try {
     const response = await fetch(
-      "https://www.strava.com/api/v3/athlete/activities?per_page=10",
+      "https://www.strava.com/api/v3/athlete/activities?per_page=5",
       requestOptions
     );
     return response.json();
