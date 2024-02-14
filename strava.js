@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 dotenv.config();
 
-export function isTokenExpired(currentExpirationTime) {
+function isTokenExpired(currentExpirationTime) {
   const currentEpochTime = Date.now();
 
   if (currentExpirationTime === "undefined") {
