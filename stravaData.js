@@ -22,6 +22,7 @@ export async function getActivityData() {
       "https://www.strava.com/api/v3/athlete/activities?per_page=5",
       requestOptions
     );
+    console.log("API response: ", response.json());
     return response.json();
   } catch (error) {
     console.log("error", error);
