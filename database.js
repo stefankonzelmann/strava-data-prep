@@ -28,7 +28,7 @@ export async function insertActivities(activities) {
     }
 
     console.log(
-      `${insertedActivities.length} / ${activities.length} new activities inserted`
+      `${insertedActivities.length} / ${activities.length} activities inserted`
     );
     return insertedActivities;
   } finally {

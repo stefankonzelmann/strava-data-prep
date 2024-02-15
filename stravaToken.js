@@ -4,14 +4,7 @@ import * as fs from "fs";
 dotenv.config();
 
 function isTokenExpired(currentExpirationTime) {
-  const currentEpochTime = Date.now();
-
-  if (currentExpirationTime === "undefined") {
-    return `There is an error with the currentEpirationTime, it's value is: ${currentExpirationTime}.`;
-  }
-  // console.log("Now: ", currentEpochTime);
-  // console.log("Expiration: ", currentExpirationTime * 1000);
-  return currentEpochTime > currentExpirationTime * 1000;
+  return Date.now() > currentExpirationTime * 1000;
 }
 
 async function generateNewToken() {
@@ -39,7 +32,7 @@ async function generateNewToken() {
   }
 }
 
-const persistNewTokenData = async (newTokenData) => {
+async function persistNewTokenData(newTokenData) {
   console.log(newTokenData);
   // Read the .env file
   const envBuffer = fs.readFileSync(".env");
@@ -58,53 +51,21 @@ const persistNewTokenData = async (newTokenData) => {
     .map((key) => `${key}=${envConfig[key]}`)
     .join("\n");
   await fs.promises.writeFile(".env", envText);
-};
-
-async function getActivityData() {
-  console.log("Requesting activity data from Strava...");
-  let myHeaders = new Headers();
-  myHeaders.append(
-    "Authorization",
-    `Bearer ${process.env.STRAVA_CACHED_TOKEN}`
-  );
-
-  const requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow",
-  };
-
-  try {
-    const response = await fetch(
-      "https://www.strava.com/api/v3/athlete/activities?per_page=5",
-      requestOptions
-    );
-    return response.json();
-  } catch (error) {
-    console.log("error", error);
-  }
 }
 
-export async function executeActivityLogic() {
+export async function getActualToken() {
   const tokenExpired = isTokenExpired(process.env.STRAVA_EXPIRATION_TIME);
 
-  if (typeof tokenExpired === "string") {
-    console.log(
-      "Please resolve the error with the current expiration time stored in the .env file."
-    );
-    return;
-  } else if (tokenExpired) {
+  if (tokenExpired) {
     console.log("The expiration time has passed. Generating a new token...");
-    //if yes - generate a new token
     const newTokenData = await generateNewToken();
+
     if (!newTokenData.expirationTime) {
       console.log("There was an error getting refresh token data.");
       return;
     }
-    //save the new token info to .env
-    persistNewTokenData(newTokenData);
+
+    await persistNewTokenData(newTokenData);
+    console.log("New token data stored");
   }
-  //make request to Strava activities endpoint
-  const stravaActivityData = await getActivityData();
-  return stravaActivityData;
 }
