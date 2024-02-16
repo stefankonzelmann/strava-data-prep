@@ -33,18 +33,18 @@ async function generateNewToken() {
 }
 
 async function persistNewTokenData(newTokenData) {
-  console.log(newTokenData);
+  // console.log(newTokenData);
   // Read the .env file
   const envBuffer = fs.readFileSync(".env");
   const envConfig = dotenv.parse(envBuffer);
-  console.log("Old config: ", envConfig);
+  // console.log("Old config: ", envConfig);
 
   // Update the relevant key with the new value
   envConfig["STRAVA_EXPIRATION_TIME"] = newTokenData.expirationTime;
   envConfig["STRAVA_CACHED_REFRESH_TOKEN"] = newTokenData.refreshToken;
   envConfig["STRAVA_CACHED_TOKEN"] = newTokenData.accessToken;
 
-  console.log("New config: ", envConfig);
+  // console.log("New config: ", envConfig);
 
   // Write the updated key-value pair to the file
   const envText = Object.keys(envConfig)
@@ -57,7 +57,7 @@ export async function getActualToken() {
   const tokenExpired = isTokenExpired(process.env.STRAVA_EXPIRATION_TIME);
 
   if (tokenExpired) {
-    console.log("The expiration time has passed. Generating a new token...");
+    console.log("The token expiration time has passed");
     const newTokenData = await generateNewToken();
 
     if (!newTokenData.expirationTime) {
@@ -67,5 +67,7 @@ export async function getActualToken() {
 
     await persistNewTokenData(newTokenData);
     console.log("New token data stored");
+  } else if (!tokenExpired) {
+    console.log("Token is still valid");
   }
 }

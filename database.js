@@ -19,16 +19,17 @@ export async function insertActivities(activities) {
         // Activity does not exist in the database, insert it
         await collection.insertOne(activity);
         insertedActivities.push(activity);
+        onsole.log(`Activity with ID ${activity.id} inserted`);
       } else {
         // Activity already exists in the database, handle accordingly
         console.log(
-          `Activity with ID ${activity.id} already exists in the database.`
+          `Activity with ID ${activity.id} already exists in the database`
         );
       }
     }
 
     console.log(
-      `${insertedActivities.length} / ${activities.length} activities inserted`
+      `${insertedActivities.length} / ${activities.length} activities inserted into databse`
     );
     return insertedActivities;
   } finally {

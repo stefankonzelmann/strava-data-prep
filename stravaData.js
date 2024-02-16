@@ -4,7 +4,6 @@ dotenv.config();
 
 export async function getActivityData() {
   console.log("Requesting activity data from Strava...");
-  console.log("Using token ", process.env.STRAVA_CACHED_TOKEN);
   let myHeaders = new Headers();
   myHeaders.append(
     "Authorization",
@@ -22,8 +21,16 @@ export async function getActivityData() {
       "https://www.strava.com/api/v3/athlete/activities?per_page=5",
       requestOptions
     );
-    console.log("API response: ", response.json());
-    return response.json();
+    const responseJSON = await response.json();
+
+    console.log(`The API returned ${responseJSON.length} activites`);
+    responseJSON.forEach((activity) => {
+      console.log(
+        `${activity.type} on ${activity.start_date} with ID ${activity.id}`
+      );
+    });
+
+    return responseJSON;
   } catch (error) {
     console.log("error", error);
   }
