@@ -56,7 +56,9 @@ async function persistNewTokenData(newTokenData) {
 export async function getActualToken() {
   const tokenExpired = isTokenExpired(process.env.STRAVA_EXPIRATION_TIME);
 
-  if (tokenExpired) {
+  if (!tokenExpired) {
+    console.log("Token is still valid");
+  } else if (tokenExpired) {
     console.log("The token expiration time has passed");
     const newTokenData = await generateNewToken();
 
@@ -67,7 +69,5 @@ export async function getActualToken() {
 
     await persistNewTokenData(newTokenData);
     console.log("New token data stored");
-  } else if (!tokenExpired) {
-    console.log("Token is still valid");
   }
 }

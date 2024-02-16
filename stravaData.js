@@ -29,9 +29,8 @@ export async function getActivityData() {
         `${activity.type} on ${activity.start_date} with ID ${activity.id}`
       );
     });
-
     return responseJSON;
   } catch (error) {
-    console.log("error", error);
+    console.log("Response error", error);
   }
 }

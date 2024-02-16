@@ -6,6 +6,9 @@ const { ATLAS_URI } = process.env;
 const client = new MongoClient(ATLAS_URI);
 
 export async function insertActivities(activities) {
+  console.log(
+    `Received ${activities.length} activities from Strava API for inserting to database`
+  );
   try {
     const database = client.db("stravaTest");
     const collection = database.collection("activities_automate");
@@ -29,7 +32,7 @@ export async function insertActivities(activities) {
     }
 
     console.log(
-      `${insertedActivities.length} / ${activities.length} activities inserted into databse`
+      `${insertedActivities.length} / ${activities.length} activities inserted to database`
     );
     return insertedActivities;
   } finally {
