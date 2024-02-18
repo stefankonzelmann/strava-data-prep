@@ -22,7 +22,7 @@ export async function insertActivities(activities) {
         // Activity does not exist in the database, insert it
         await collection.insertOne(activity);
         insertedActivities.push(activity);
-        onsole.log(`Activity with ID ${activity.id} inserted`);
+        console.log(`Activity with ID ${activity.id} inserted`);
       } else {
         // Activity already exists in the database, handle accordingly
         console.log(

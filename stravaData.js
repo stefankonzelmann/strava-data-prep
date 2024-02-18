@@ -1,14 +1,12 @@
 import * as dotenv from "dotenv";
+import { generateNewToken } from "./stravaToken.js";
 
 dotenv.config();
 
 export async function getActivityData() {
-  console.log("Requesting activity data from Strava...");
+  const authCredentials = await generateNewToken();
   let myHeaders = new Headers();
-  myHeaders.append(
-    "Authorization",
-    `Bearer ${process.env.STRAVA_CACHED_TOKEN}`
-  );
+  myHeaders.append("Authorization", `Bearer ${authCredentials.accessToken}`);
 
   const requestOptions = {
     method: "GET",
@@ -21,6 +19,9 @@ export async function getActivityData() {
       "https://www.strava.com/api/v3/athlete/activities?per_page=5",
       requestOptions
     );
+
+    console.log("Activites API Response Code:", response.status);
+
     const responseJSON = await response.json();
 
     console.log(`The API returned ${responseJSON.length} activites`);
