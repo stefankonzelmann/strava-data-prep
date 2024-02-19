@@ -6,6 +6,7 @@ const { ATLAS_URI } = process.env;
 const client = new MongoClient(ATLAS_URI);
 
 export async function insertActivities(activities) {
+  console.log("Function insert activites: ", activities);
   console.log(
     `Received ${activities.length} activities from Strava API for inserting to database`
   );

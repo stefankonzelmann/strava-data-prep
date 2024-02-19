@@ -3,7 +3,29 @@ import { generateNewToken } from "./stravaToken.js";
 
 dotenv.config();
 
-export async function getActivityData() {
+function processActivityData(activities) {
+  activities.forEach((activity) => {
+    let hr_zone;
+    if (activity.average_heartrate <= 137) {
+      hr_zone = 2;
+    } else if (
+      activity.average_heartrate > 137 &&
+      activity.average_heartrate < 157
+    ) {
+      hr_zone = 3;
+    } else if (activity.average_heartrate > 157) {
+      hr_zone = 4;
+    } else {
+      hr_zone = undefined;
+    }
+
+    activity.hr_zone = hr_zone;
+  });
+
+  return activities;
+}
+
+async function getActivityDataFromAPI() {
   const authCredentials = await generateNewToken();
   let myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${authCredentials.accessToken}`);
@@ -34,4 +56,10 @@ export async function getActivityData() {
   } catch (error) {
     console.log("Response error", error);
   }
+}
+
+export async function getActivityData() {
+  const activites = await getActivityDataFromAPI();
+  const processedActivites = processActivityData(activites);
+  return processedActivites;
 }
